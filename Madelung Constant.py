@@ -28,10 +28,10 @@ def atom_potential(i, j, k):
 
 
 
-def sum_potential(L=10):
+def total_potential(L=10):
     """ Returns the sum of all the potentials of atoms in the cubic lattice of length L"""
     
-    total_potential = 0
+    sum_potential = 0
     
     # Summation
     for i in range(-L, L):
@@ -43,16 +43,15 @@ def sum_potential(L=10):
                 if i == j == k == 0:
                     # do nothing
                     continue
-                else:
-                    total_potential += atom_potential(i, j, k)
+                sum_potential += atom_potential(i, j, k)
     
     # Return our sum
-    return total_potential
+    return sum_potential
 
 
 def compute_Madelung(depth=10):
     """ Approximates the Madelung Constant """
-    madelung = 4 * pi * perm_vac * a * sum_potential(depth) / e
+    madelung = 4 * pi * perm_vac * a * total_potential(depth) / e
     return madelung
 
 
