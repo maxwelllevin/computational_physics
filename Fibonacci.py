@@ -38,5 +38,7 @@ def while_fibonacci(n, fib_list=[]):
 # ======= Test our code ======= #
 
 
-fibs = while_fibonacci(10000)
+N = int( input("Enter the number of fibonacci numbers you would like to print: "))
+
+fibs = while_fibonacci(N)
 print(fibs)

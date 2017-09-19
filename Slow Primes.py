@@ -26,7 +26,6 @@ def is_prime(test_num):
         if test_num % index == 0: return False
         index += 1
     
-    
     # If it is none of these, it is prime 
     prime_list.append(test_num)
     return True
