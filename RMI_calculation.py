@@ -21,38 +21,12 @@ E_3 = data[5]  # plot of third energy
 count = len(T_plot)  # number of temperature points
  
 
-Tmax = 997
-Tmin = 0
-h = 0.1
- 
-print(E_1[-1])
- 
 # Fill in this space with the calculation of RMI for each temperature:
 ##########      CODE      ##########
  
 
-# Returns the value of E1 at an index
-def get_E1(T):
-    index = int( (Tmax - T) / h )
-    return E_1[index]
+"""
 
-# Returns the value of E2 at an index
-def get_E2(T):
-    index = int( (Tmax - T) / h )
-    return E_2[index]
-
-# Returns the value of E3 at an index
-def get_E3(T):
-    index = int( (Tmax - T) / h )
-    return E_3[index]
-
-
-# Builds our inside function of T
-def inside_func():
-    return lambda T: (2*get_E1(int(T)) - get_E2(int(T)) - 2 * get_E3(int(T))) / (T**2)
-
-
-# Our integral computation function:
 def simpson_integral(lower_bound, upper_bound, N=100, function=inside_func()):
     depth = (upper_bound - lower_bound) / N
     ans = ( function(lower_bound) + function(upper_bound))
@@ -66,10 +40,40 @@ def simpson_integral(lower_bound, upper_bound, N=100, function=inside_func()):
     ans *= depth / 3
     return ans
 
+"""
 
+# Make sure data is printing correctly
+#print( E_1[0] )
+#print( E_2[0] )
+#print( E_3[0] )
 
+# Initialize Constants
+Tmin = 0.001
+Tmax = 100
+deltaT = 0.1
 
+# Initialize Variables : SOMETHING BROKEN
+T = 50
+index = int( 10 * (T - Tmin) )
+print("Index starts at:", index)
+integral = ( 2*E_1[0] - E_2[0] - 2*E_3[0] ) / Tmin**2  + ( 2*E_1[-1] - E_2[-1] - 2*E_3[-1] ) / Tmax**2
 
+# Compute RMI(T) for any T
+while T < Tmax and 0 <= index < len(E_1):
+    
+    if index % 2 == 0:
+        integral += 4*( 2*E_1[index] - E_2[index] - 2*E_3[index] ) / T**2
+    else:
+        integral += 4*( 2*E_1[index] - E_2[index] - 2*E_3[index] ) / T**2
+    
+    integral *= deltaT/3
+    T += deltaT
+    index += 1
+
+# PRINTS -1.05192287916e-06 IF T<100 AND 10093.0139622 IF T>=100.. WHY???
+print("Index got to:", index)
+print("T got to:", T)
+print("The integral is:", integral)
 
 ##########      CODE      ##########
  
