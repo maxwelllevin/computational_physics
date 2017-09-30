@@ -48,12 +48,12 @@ def simpson_integral(lower_bound, upper_bound, N=100, function=inside_func()):
 #print( E_3[0] )
 
 # Initialize Constants
-Tmin = 0.001
+Tmin = 0.01
 Tmax = 100
 deltaT = 0.1
 
-# Initialize Variables : SOMETHING BROKEN
-T = 50
+# Initialize Variables : SOMETHING BROKEN (DEBUG)
+T = 100
 index = int( 10 * (T - Tmin) )
 print("Index starts at:", index)
 integral = ( 2*E_1[0] - E_2[0] - 2*E_3[0] ) / Tmin**2  + ( 2*E_1[-1] - E_2[-1] - 2*E_3[-1] ) / Tmax**2
@@ -64,7 +64,7 @@ while T < Tmax and 0 <= index < len(E_1):
     if index % 2 == 0:
         integral += 4*( 2*E_1[index] - E_2[index] - 2*E_3[index] ) / T**2
     else:
-        integral += 4*( 2*E_1[index] - E_2[index] - 2*E_3[index] ) / T**2
+        integral += 2*( 2*E_1[index] - E_2[index] - 2*E_3[index] ) / T**2
     
     integral *= deltaT/3
     T += deltaT
@@ -74,6 +74,18 @@ while T < Tmax and 0 <= index < len(E_1):
 print("Index got to:", index)
 print("T got to:", T)
 print("The integral is:", integral)
+
+
+
+def x_squared(x):
+    return x**2
+arr = [1, 2, 3, 4, 5]
+
+mapped = map(x_squared, arr)
+mapped = list(mapped)
+
+print(mapped)
+
 
 ##########      CODE      ##########
  
