@@ -8,8 +8,8 @@ Created on Fri Sep 22 10:04:10 2017
 """
 
 # HOMEWORK 2 Reading from a data file. Fill in the area for the integrand.
-from numpy import loadtxt, linspace
-from pylab import plot, show, xlim, ylim, legend, xlabel, ylabel, title
+from numpy import loadtxt#, linspace
+from pylab import plot, show, xlim, legend, xlabel, ylabel, title
  
  
 data = loadtxt('data1.txt')  # loads the data file
@@ -26,7 +26,6 @@ count = len(T_plot)  # number of temperature points
  
 
 """
-
 def simpson_integral(lower_bound, upper_bound, N=100, function=inside_func()):
     depth = (upper_bound - lower_bound) / N
     ans = ( function(lower_bound) + function(upper_bound))
@@ -39,7 +38,6 @@ def simpson_integral(lower_bound, upper_bound, N=100, function=inside_func()):
     
     ans *= depth / 3
     return ans
-
 """
 
 # Make sure data is printing correctly
