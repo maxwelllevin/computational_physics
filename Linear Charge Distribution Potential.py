@@ -151,7 +151,6 @@ print("The error of E is: <", ansEx[1], ",", ansEy[1], ",", ansEz[1], ">")
 
 
 # ======== Make a density plot ========= #
-# TODO: Make a density plot
 print("\nPart c)")
 
 # Make our potential function for our density plot

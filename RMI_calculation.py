@@ -4,11 +4,10 @@ RMI_calculation
 
 Created on Fri Sep 22 10:04:10 2017
 
-@author: Maxwell Levin
+@author: Maxwell Levin 
 """
-
 # HOMEWORK 2 Reading from a data file. Fill in the area for the integrand.
-from numpy import loadtxt#, linspace
+from numpy import loadtxt
 from pylab import plot, show, xlim, legend, xlabel, ylabel, title
  
  
@@ -23,66 +22,57 @@ count = len(T_plot)  # number of temperature points
 
 # Fill in this space with the calculation of RMI for each temperature:
 ##########      CODE      ##########
- 
 
-"""
-def simpson_integral(lower_bound, upper_bound, N=100, function=inside_func()):
-    depth = (upper_bound - lower_bound) / N
-    ans = ( function(lower_bound) + function(upper_bound))
-    
-    for k in range(1, N, 2):
-        ans += 4 * function(lower_bound + k * depth)
-    
-    for k in range(2, N-1, 2):
-        ans += 2 * function(lower_bound + k * depth)
-    
-    ans *= depth / 3
-    return ans
-"""
+# Contains temperature data
+T_data = data[0]
 
-# Make sure data is printing correctly
-#print( E_1[0] )
-#print( E_2[0] )
-#print( E_3[0] )
+# Get Tmin and Tmax from the data
+T_min = T_data[0]
+T_max = T_data[-1]
 
-# Initialize Constants
-Tmin = 0.01
-Tmax = 100
-deltaT = 0.1
-
-# Initialize Variables : SOMETHING BROKEN (DEBUG)
-T = 100
-index = int( 10 * (T - Tmin) )
-print("Index starts at:", index)
-integral = ( 2*E_1[0] - E_2[0] - 2*E_3[0] ) / Tmin**2  + ( 2*E_1[-1] - E_2[-1] - 2*E_3[-1] ) / Tmax**2
-
-# Compute RMI(T) for any T
-while T < Tmax and 0 <= index < len(E_1):
-    
-    if index % 2 == 0:
-        integral += 4*( 2*E_1[index] - E_2[index] - 2*E_3[index] ) / T**2
-    else:
-        integral += 2*( 2*E_1[index] - E_2[index] - 2*E_3[index] ) / T**2
-    
-    integral *= deltaT/3
-    T += deltaT
-    index += 1
-
-# PRINTS -1.05192287916e-06 IF T<100 AND 10093.0139622 IF T>=100.. WHY???
-print("Index got to:", index)
-print("T got to:", T)
-print("The integral is:", integral)
+# Find the length of our temperature data array
+T_length = len( T_data )
 
 
+# The inside function we'll use as our integrand
+def inside_RMI():
+    return lambda i: (2*E_1[i] - E_2[i] - 2*E_3[i]) / (T_data[i]**2)
 
-def x_squared(x):
-    return x**2
-arr = [1, 2, 3, 4, 5]
+# Computes the integral of the integrand using Simpson's Rule
+def simpson_RMI(index_s, index_f, func_length, func=lambda x:1):
+    integral = func(index_s) + func(index_f)
+    for k in range(1, func_length, 2):
+        integral += 4 * func(index_s + k)
+    for k in range(2, func_length, 2):
+        integral += 2 * func(index_s + k)
+    return integral / 3
 
-mapped = map(x_squared, arr)
-mapped = list(mapped)
 
-print(mapped)
+# Builds our RMI function of 1-variable (integer input only)
+def RMI_builder():
+    return lambda index: simpson_RMI(index, -1, T_length - index, inside_RMI())
+
+# Our RMI function (integer input from 0 to 997 only)
+RMI = RMI_builder()
+
+# Test RMI at a specific index
+#print( RMI(0) )
+
+# Calculate RMI at all the indices
+RMI_plot = []
+for i in range(T_length):
+    RMI_plot.append( RMI(i) )
+
+# Plot our results
+plot(T_plot, RMI_plot, label='RMI')
+xlabel('Temperature (K)')
+ylabel('RMI (J)')
+title('RMI')
+xlim(0,100)
+show()
+
+# Error for our Simpson's rule is h^4, our h = 0.1
+print("Our estimated error is", format(0.1**4, '0.4f'), "at each point we've calculated RMI(T)")
 
 
 ##########      CODE      ##########
