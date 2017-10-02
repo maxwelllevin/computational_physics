@@ -66,7 +66,7 @@ for i in range(T_length):
 # Plot our results
 plot(T_plot, RMI_plot, label='RMI')
 xlabel('Temperature (K)')
-ylabel('RMI (J)')
+ylabel('RMI')
 title('RMI')
 xlim(0,100)
 show()
