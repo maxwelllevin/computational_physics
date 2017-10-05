@@ -1,9 +1,8 @@
+
 # -*- coding: utf-8 -*-
 """
 HW#2: Potential & Electric Field of Linear Charge Distribution
-
 Created on Tue Sep 26 14:23:01 2017
-
 @author: Maxwell Levin
 """
 
@@ -159,34 +158,20 @@ def V_potential(x,y):
 
 xrange = 10
 yrange = 10
-points = 100
-xspace = xrange / (2*points)
-yspace = yrange / (2*points)
+points = 50
+xspace = 2*xrange / (points)
+yspace = 2*yrange / (points)
 
 arr = np.empty([points, points], float)
 
-for i in range(-points, points):
-    y = yspace*i
-    for j in range(-points, points):
-        x = xspace*j
+for i in range(0, points):
+    y = i*yspace - yrange
+    for j in range(0, points):
+        x = j*xspace - xrange
         arr[i,j] = V_potential(x,y)
 
-pl.imshow(arr, origin="lower", extent=[-xrange,xrange,-yrange,yrange])
-pl.bone() 
+
+
+pl.imshow(arr, origin="lower", extent=[-xrange,xrange, -yrange,yrange])
+#pl.bone() 
 pl.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

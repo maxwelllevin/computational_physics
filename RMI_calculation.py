@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RMI_calculation
-
 Created on Fri Sep 22 10:04:10 2017
-
 @author: Maxwell Levin 
 """
 # HOMEWORK 2 Reading from a data file. Fill in the area for the integrand.
