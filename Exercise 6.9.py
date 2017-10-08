@@ -13,7 +13,7 @@ import numpy as np
 pi = np.pi
 m_e = 9.1e-31 #kg
 h = 6.6e-34 #J
-h_bar = h / (2 * pi)
+h_bar = h / (2 * pi) #J
 e = 1.6e-19 #J
 a = 1.6e-18 #J
 L = 5e-10 #m
@@ -46,19 +46,38 @@ def H_mn_inside(m,n):
 def H_mn(m,n):
     return (2/L) * simpson_integral(upper_bound=L, function=H_mn_inside(m,n))
 
+# Analytically gives us values for H with V(x) = ax/L
+def H_mn_with_V(m,n):
+    if m == n:
+        num = h_bar*h_bar * n*n *pi*pi
+        den = 2 * m_e * L*L
+        return num/den + a/4
+    elif m%2 == n%2:
+        num = -8*a*m*n
+        den = pi*pi * (m*m - n*n)**2
+        return num/den
+    else:
+        return a/2
 
-H = np.zeros([10,10], float)
+
+# =========== Test our Functions ========== #
+
+# We want a 10x10 array of floats for our matrix H
 size = 10
+H = np.zeros([size, size], float)
 
+
+# Our Matrix H such that H[S] = E*S
 for m in range(size):
     for n in range(size):
-        H[m,n] = H_mn(m+1,n+1)
-
+        H[m,n] = H_mn_with_V(m+1,n+1)
 print(H)
 
+# Calculate our eigenvalues, X
 X, V = np.linalg.eigh(H)
 
 
-print("\n\nEigenvalues are:\n")
+X = list( map( lambda x: x/e, X ) )
+print("\n\nOur eigenvalues are:\n", X)
 
 
