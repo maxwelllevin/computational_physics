@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Exercise 5.14
+
 Created on Sun Oct  8 19:25:17 2017
 
 @author: Maxwell, with help from Evan Davidson and Eli Barnes
 """
+
 import numpy as np
 import pylab as pl
 
@@ -43,7 +46,7 @@ def trapezoidal_2D(z, n=N, f = func()) :
     return I
 
 
-# 
+# ======= Make our plot ======= #
 
 y = []
 x = np.arange(.1,10.1,.1)
