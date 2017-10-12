@@ -4,7 +4,7 @@ Exrcise 5.21: Electric Field of a Charge Distribution (Pg. 209)
 
 Created on Sat Oct  7 15:16:50 2017
 
-@author: Maxwell
+@author: Maxwell, with help from Iddo Fuhrmann 
 """
 
 import numpy as np
@@ -14,34 +14,54 @@ import pylab as pl
 pi = np.pi
 e_0 = 8.85e-12
 q = 1
-q_0 = 100 
+q_0 = 100
+L = 5  #L goes from -5 to 5 
+
+# Change x_range and y_range to 50 for part a
+x_range = 50
+y_range = 50
+
+
+# =========== FUNCTIONS ============ #
+
 
 def electric_potential():
     return lambda x,y=0: ( q / ( 4*pi*e_0*np.sqrt( (x-5)**2 + y**2 ) ) ) - ( q / ( 4*pi*e_0*np.sqrt( (x+5)**2 + y**2 ) ) )
 
 def e_x():
     return lambda x,y: -(q/(4*pi*e_0)) * ( (x + 5)/(((x+5)**2 + y*y)**(3/2)) - (x-5)/(((x-5)**2 + y*y)**(3/2))  )
-    #return lambda x,y: -(q/(4*pi*e_0))*((x+5)/(((x+5)**(2)+y**2)**(3/2)))-(x-5)/(((x-5)**(2)+y**2)**(3/2))
 
 def e_y():
     return lambda x,y: -(q*y/(4*pi*e_0)) * ( ((x+5)**2 + y*y )**(-3/2) - ((x-5)**2 + y*y)**(-3/2) )
-    #return lambda x,y: -(q/(4*pi*e_0))*(y/(((x+5)**(2)+y**2)**(3/2))-y/(((x-5)**(2)+y**2)**(3/2)))
 
 def E_field(x,y):
     return ( e_x()(x,y), e_y()(x,y) )
 
-def charge_density(x,y, Lx=5, Ly=5):
-    return q_0 * np.sin( 2*pi*x / Lx ) * np.sin( 2*pi*y / Ly ) 
+def new_V_inside(x,y,x1,y1):
+    return (q_0*np.sin(pi*x/L)*np.sin(pi*y/L) ) / ( 4*pi*e_0*np.sqrt( (x-x1)**2 + (y-y1)**2 ) )
+
+def trapInt(x,y):
+    s = 0
+    for i in range(-L, L+1):
+        for j in range(-L, L+1):
+            if(i == L or i == -L):
+                c1 = 1/2
+            else:
+                c1 = 1
+            if(j == L or i == -L):
+                c2 = 1/2
+            else:
+                c2 = 1
+            if(x != i and y != j):
+                s += c1*c2*new_V_inside(i,j, x,y)
+    return (s)
+
 
 
 # ======= Make a density plot of Phi(x,y) ======= #
 
 
 Phi = electric_potential()
-
-# Change x_range and y_range to 50 for part a
-x_range = 50
-y_range = 50
 
 
 res = 1
@@ -66,7 +86,7 @@ pl.imshow(arr, origin="lower", extent=[-x_range,x_range, -y_range,y_range])
 pl.title("Electric Potential on the X-Y Plane")
 pl.xlabel("x, cm")
 pl.ylabel("y, cm")
-pl.nipy_spectral()
+pl.spectral()
 pl.show()
 
 
@@ -92,7 +112,7 @@ pl.hsv()
 pl.show()
 
 
-# Direction Plot - HELP
+# Direction Plot
 direct = np.zeros([2*x_range, 2*x_range], float)
 for x in range(-x_range, x_range):
     for y in range(-y_range, y_range):
@@ -107,6 +127,7 @@ pl.imshow(direct, origin="lower", extent=[-x_range,x_range, -y_range,y_range])
 pl.title("Direction of E field on the X-Y Plane")
 pl.xlabel("x, cm")
 pl.ylabel("y, cm")
+#pl.hsv()
 pl.show()
 
 
@@ -114,47 +135,30 @@ pl.show()
 
 print("\nPart c)\n")
 
-#
-#
-# NOT EVEN CLOSE TO COMPLETE
-#
-#
 
-L = x_range
+points=100
+V = np.zeros([points, points], float)
+Ex = np.zeros([points, points], float)
+Ey = np.zeros([points, points], float)
+E = np.zeros([points, points], float)
+Edir = np.zeros([points, points], float)
 
-# Function that computes the integral of a given function from set bounds with specific depth (~accuracy)
-def simpson_integral(lower_bound=0, upper_bound=L, function=lambda x: 1, depth=0.1):
-    N = int( (upper_bound - lower_bound) / depth )
-    ans = ( function(lower_bound) + function(upper_bound))
-    
-    for k in range(1, N, 2):
-        ans += 4 * function(lower_bound + k * depth)
-    
-    for k in range(2, N-1, 2):
-        ans += 2 * function(lower_bound + k * depth)
-    
-    ans *= depth / 3
-    return ans
+dx=0
+dy=0
 
-def new_E_inside(x1,y1):
-    return lambda x,y: (q_0*np.sin(2*pi*x/L)*np.sin(2*pi*y/L) ) / ( 4*pi*e_0*np.sqrt( (x-x1)**2 + (y-y1)**2 ) )
+print(trapInt(0,0))
 
-def new_E_x():
-    return 0
+for i in range(0,100):
+    for j in range(0,100):
+        Ex[i][j]=(trapInt(i-49.5,j-50)-trapInt(i-50,j-50))/.5
+        Ey[i][j]=(trapInt(i-50,j-49.5)-trapInt(i-50,j-50))/.5
+        E[i][j]=np.sqrt(Ex[i][j]**2+Ey[i][j]**2)
+        Edir[i,j]=np.arctan(Ey[i,j]/Ex[i,j])
 
-
-
-
-# Plot of charge distribution
-char = np.zeros([2*L, 2*L], float)
-for x in range(-L, L):
-    for y in range(-L, L):
-        char[y+L, x+L] = charge_density(x,y, L, L) # Have to reverse the index?
-
-pl.imshow(char, origin="lower", extent=[-x_range,x_range, -y_range,y_range])
-pl.title("Magnitude of E field on the X-Y Plane")
-pl.xlabel("x, cm")
-pl.ylabel("y, cm")
-pl.bone()
+pl.imshow(E, origin="lower", extent=[-50,50,-50,50])
+pl.bone() 
 pl.show()
 
+pl.imshow(Edir, origin="lower", extent=[-50,50,-50,50])
+pl.hsv() 
+pl.show()
