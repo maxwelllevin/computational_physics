@@ -73,7 +73,7 @@ g = -9.8    # Acceleration due to gravity
 d = -1      # Damping constant
 m = 1       # Mass of pendulum
 l = 1       # Length of pendulum
-h = 1e-24\    # Set our depth/step size
+h = 1e-2    # Set our depth/step size
 
 def forcing(s):   
     return np.sin(s)
