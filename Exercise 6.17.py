@@ -9,7 +9,6 @@ Created on Thu Oct 19 20:59:32 2017
 
 import numpy as np
 
-pi = np.pi
 
 Vp = 5
 R1 = 1000
@@ -36,12 +35,17 @@ def jacobian(V1, V2):
 
 def mat_inv(mat):
     inv = np.zeros([2, 2], float)
-    det_inv = (mat[0,0]*mat[1,1] - mat[1,0]*mat[0,1])**(-1)
+    
+    det_inv = 1/(mat[0,0]*mat[1,1] - mat[0,1]*mat[1,0])
+    
     inv[0,0] = det_inv*mat[1,1]
-    inv[0,1] =-det_inv*mat[0,1]
-    inv[1,0] =-det_inv*mat[1,0]
-    inv[1,1] = det_inv*mat[1,1]
+    inv[0,1] = -det_inv*mat[0,1]
+    inv[1,0] = -det_inv*mat[1,0]
+    inv[1,1] = det_inv*mat[0,0]
+
     return inv
+
+
 
 
 
@@ -52,6 +56,6 @@ V= np.zeros([2],float)
 V[0]=v1
 V[1]=v2
 
-for i in range(0,100000):
+for i in range(0,100):
     V -= np.dot( mat_inv(jacobian(V[0],V[1])), f_vec(V[0],V[1]) )
 print(V)    
