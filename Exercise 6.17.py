@@ -49,7 +49,7 @@ def mat_inv(mat):
 
 
 
-v1 = 0.2
+v1 = 0.3
 v2 = 1.0
 
 V= np.zeros([2],float)
@@ -58,4 +58,4 @@ V[1]=v2
 
 for i in range(0,100):
     V -= np.dot( mat_inv(jacobian(V[0],V[1])), f_vec(V[0],V[1]) )
-print(V)    
+print(V)

@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Exercise 6.16: The Lagrange Point
-
 Created on Wed Oct 18 21:20:29 2017
-
 @author: Maxwell
 """
 
@@ -37,7 +35,7 @@ def RHS(r):
 
 
 # This is just for visualization purposes
-domain = np.arange(0,R,1000)
+domain = np.arange(0,R,1e+6)
 f = []
 g = []
 for i in domain:
@@ -58,12 +56,5 @@ for i in range(1000):
     df = (F(r1+h) - F(r1-h))/h  # value of the derivative at r1
     r1 -= fr/df                 # update the value of r1
 
-#r1 /= 1e+8
-print(r1/R, "e+8")            # print r1
-
-
-
-
-
-
-
+r1 /= 1e+8
+print("The Lagrange Point is at: %.5f" %r1, "e+8 m")            # print r1

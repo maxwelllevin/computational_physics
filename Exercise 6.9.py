@@ -1,83 +1,98 @@
 # -*- coding: utf-8 -*-
 """
 Exercise 6.9
+With math to improve efficiency
 
-Created on Wed Oct  4 15:57:51 2017
+Created on Thu Oct 19 17:50:16 2017
 
-@author: Maxwell Levin
+@author: Maxwell
 """
 
 import numpy as np
+import pylab as pl
 
-# Declare our constants to use 
-pi = np.pi
-m_e = 9.1e-31 #kg
-h = 6.6e-34 #J
-h_bar = h / (2 * pi) #J
-e = 1.6e-19 #J
-a = 1.6e-18 #J
-L = 5e-10 #m
-
-# Returns the energy at a specific n-state
-def find_E_n(n):
-    return ( n*n * pi*pi * h_bar*h_bar ) / ( 2 * m_e * L*L )
+pi = np.pi              # Pi
+m_e = 9.1094e-31        # Mass of an electron
+h = 6.6e-34             # Constant h
+h_bar = h / (2 * pi)    # Constant 'h bar'
+e = 1.6e-19             # Charge of an electron (1eV)
+a = 1.6e-18             # Constant in our potential function (10eV)
+L = 5e-10               # Width of our quantum well 
+size = 100              # Size of H_mn array - marginal impact on accuracy
 
 
-# Function that computes the integral of a given function from set bounds with specific depth (~accuracy)
-def simpson_integral(lower_bound=0, upper_bound=L, function=lambda x: 1, depth=0.1):
+def H_mn(m,n):
+    """ We do some math off-camera to simplify our large integral
+        into a small piecewise function"""
+    if m == n: 
+        return (h_bar*h_bar*pi*pi*n*n) / (2*m_e*L*L) + a/2
+    elif (m%2 == n%2):
+        return 0
+    numer = -8*m*n*a
+    denom = pi*pi*((m*m-n*n)**2)
+    return numer/denom
+
+
+def construct_H(size):
+    """ Builds a square matrix H of a given size. """
+    H = np.zeros([size,size], float)
+    for m in range(size):
+        for n in range(size):
+            H[m,n] = H_mn(m+1,n+1)/e
+    return H
+
+
+def psi_prob_dist(x):
+    total=0
+    for i in range(size):
+        total+=EIG[i]*np.sin(pi*(i+1)*x/L)
+    return abs(total**2)
+
+def psi1(x,n):
+    psi1=0
+    for k in range(n) :
+        psi1 += np.sin((k+1)*pi*x/L)*VEC[0][k]
+    return (np.sqrt(2/L)*psi1)**2
+
+def psi2(x,n):
+    psi2=0
+    for k in range(n) :
+        psi2 += np.sin((k+1)*pi*x/L)*VEC[1][k]
+    return (np.sqrt(2/L)*psi2)**2
+
+def psi3(x,n):
+    psi3=0
+    for k in range(n) :
+        psi3+=np.sin((k+1)*pi*x/L)*VEC[2][k]
+    return (np.sqrt(2/L)*psi3)**2
+
+
+def simpson_integral(lower_bound=0, upper_bound=L, function=lambda x: 1, depth=1e-14):
     N = int( (upper_bound - lower_bound) / depth )
     ans = ( function(lower_bound) + function(upper_bound))
-    
     for k in range(1, N, 2):
         ans += 4 * function(lower_bound + k * depth)
-    
     for k in range(2, N-1, 2):
         ans += 2 * function(lower_bound + k * depth)
-    
     ans *= depth / 3
     return ans
 
+# ================================== #
 
-# function inside the integral
-def H_mn_inside(m,n):
-    return lambda x: np.sin( (pi*m*x)/L ) * (   ( h_bar*h_bar*0.5/m_e )*( n*n*pi*pi/L**2 )*np.sin( n*pi*x/L ) + (a*x/L)*np.sin(n*pi*x/L)  )
+H = construct_H(size)
+EIG, VEC = np.linalg.eigh(H)
+norm_wave_condition = simpson_integral(0, L, psi_prob_dist)
 
-# integrates our inside function
-def H_mn(m,n):
-    return (2/L) * simpson_integral(upper_bound=L, function=H_mn_inside(m,n))
-
-# Analytically gives us values for H with V(x) = ax/L
-def H_mn_with_V(m,n):
-    if m == n:
-        num = h_bar*h_bar * n*n *pi*pi
-        den = 2 * m_e * L*L
-        return num/den + a/4
-    elif m%2 == n%2:
-        num = -8*a*m*n
-        den = pi*pi * (m*m - n*n)**2
-        return num/den
-    else:
-        return a/2
+print("Our matrix H is:\n", H[:10,:10])
+print("\nOur corresponding eigenvalues are:\n", EIG[:10])
+print("The integral of psi from 0 to L is about:", norm_wave_condition)
 
 
-# =========== Test our Functions ========== #
 
-# We want a 10x10 array of floats for our matrix H
-size = 10
-H = np.zeros([size, size], float)
-
-
-# Our Matrix H such that H[S] = E*S
-for m in range(size):
-    for n in range(size):
-        H[m,n] = H_mn_with_V(m+1,n+1)
-print(H)
-
-# Calculate our eigenvalues, X
-X, V = np.linalg.eigh(H)
-
-
-X = list( map( lambda x: x/e, X ) )
-print("\n\nOur eigenvalues are:\n", X)
-
-
+#create the graphs for the 3 psis
+x = np.linspace(0,L,100)
+pl.plot(x,psi1(x,size),label='psi1')
+pl.plot(x,psi2(x,size),label='psi2')
+pl.plot(x,psi3(x,size), label='psi3')
+pl.legend()
+pl.show()
