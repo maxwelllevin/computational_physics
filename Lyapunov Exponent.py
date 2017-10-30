@@ -39,7 +39,7 @@ def F2(theta_, w, t):
 def F1(theta_, w, t):
     return w
 
-# Our function that computes the solution to the second order differential
+# Our function that computes the solution to our second order differential
 # equation using 4th order Runge-Kutta method
 def chaos_runge_kutta(theta, omega=0):
     omegaPoints = []
@@ -76,10 +76,42 @@ def vary_init_conditions(num_trials):
             log_theta_plot[j] /= num_trials
     return log_theta_plot
 
+
+def least_squares_regression_line(arrayX, arrayY):
+    # Calculate the mean of x and y
+    xbar = 0 
+    for x in arrayX:
+        xbar += x / len(arrayX)
+    ybar = 0
+    for y in arrayY:
+        ybar += y / len(arrayY)
+    # Calculate slope using least squares method
+    m = xsum = 0
+    for i in range( len(arrayX) ):
+        m += (arrayX[i] - xbar)*(arrayY[i] - ybar)
+        xsum += (arrayX[i] - xbar)**2
+    m /= xsum
+    # Plot the line of best fit
+    b = ybar - m*xbar
+    regression_line = []
+    for x in arrayX:
+        regression_line.append(m*x+b)
+    return regression_line, m
+    
+    
+    
+
+
 # ======================================================================= #
 
-logPlot = vary_init_conditions(50)
+logPlot = vary_init_conditions(100)
 pl.plot(tPoints, logPlot)
 
-# TODO: Compute Lyapunov Exponent using Least squares method
+percent = .40
+active_range = int(len(tPoints)*percent)
+best_fit, m = least_squares_regression_line(tPoints[:active_range], logPlot[:active_range]) 
+pl.plot(tPoints[:active_range], best_fit, label="Line of best fit")
+pl.legend()
+pl.show()
 
+print("The Lyapunov Exponent is approximately", m, "for this system.\n")
