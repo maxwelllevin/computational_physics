@@ -8,11 +8,12 @@ Created on Fri Oct 27 15:54:42 2017
 """
 
 
-""" We seek the solution to the second-order ODE: 
-    ml * d/dt(dTheta/dt) = -mgL * sin(Theta) + aL(dTheta/dt) + f(t)
-    where m is the mass on the pendulum, l is the length of the 
-    pendulum, g is the acceleration due to gravity, a is the damping
-    constant, and f(t) is the forcing term.
+""" We seek to plot the solution to the differential
+    equation we solved in RK Chaos.py, but vary the strength
+    of our forcing term linearly so that we can see the
+    bifurcation diagram produced by plotting theta against
+    the strength of the forcing term. (We expect our 
+    diagram to resemble a fractal)
 """
 
 import numpy as np
@@ -27,7 +28,7 @@ g = 9.8     # Acceleration due to gravity
 q = 1/2     # Damping constant
 m = 1       # Mass of pendulum
 L = 9.8     # Length of pendulum
-h = 2e-3    # Set our depth/step size
+h = 1e-2    # Set our depth/step size
 w_d = 2/3   # Set the frequency of our forcing
 
 
@@ -79,9 +80,9 @@ def chaos_runge_kutta(theta, omega, f_d):
 
 
 def vary_Fd(theta, omega):
-    fstep = 0.0005
-    domain = 0.10   # Set to 0.25 for range 1.35-->1.6
-    f_d = 1.40      # Set to 1.35
+    fstep = 0.0005  # We want this to be small
+    domain = 0.25   # Set to 0.25 for range 1.35-->1.6
+    f_d = 1.35      # Set to 1.35 to start
     size = int(domain/fstep)
     pl.xlabel("Strength of forcing term")
     pl.ylabel("Theta, radians")
@@ -89,10 +90,14 @@ def vary_Fd(theta, omega):
         sTheta, fList = chaos_runge_kutta(theta, omega, f_d)
         pl.plot(fList, sTheta, "k.")
         f_d += fstep
+    pl.ylim([-np.pi,np.pi])
     pl.show()
 
 
 
 # ==================================================================================== #
 
-vary_Fd(0.2, 0.0)
+# Set theta = 0.2 and omega = 0 for initial conditions
+vary_Fd(0.2, 0.0) 
+
+

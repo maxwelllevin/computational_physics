@@ -68,7 +68,7 @@ def vary_init_conditions(num_trials):
     log_theta_plot = np.zeros([int((b-a)/h)], float)
     epsi = 1e-6
     for i in range(num_trials):
-        theta = rd.uniform(0.2,0.21)
+        theta = rd.uniform(0.2,0.30)
         thetaRand = chaos_runge_kutta(theta, 0)
         thetaEpsi = chaos_runge_kutta(theta + epsi, 0)
         for j in range(len(thetaRand)):
@@ -77,7 +77,7 @@ def vary_init_conditions(num_trials):
     return log_theta_plot
 
 
-def least_squares_regression_line(arrayX, arrayY):
+def line_best_fit(arrayX, arrayY):
     # Calculate the mean of x and y
     xbar = 0 
     for x in arrayX:
@@ -105,13 +105,18 @@ def least_squares_regression_line(arrayX, arrayY):
 # ======================================================================= #
 
 logPlot = vary_init_conditions(100)
-pl.plot(tPoints, logPlot)
+pl.plot(tPoints, logPlot, label="Log Plot", color='c')
 
-percent = .40
-active_range = int(len(tPoints)*percent)
-best_fit, m = least_squares_regression_line(tPoints[:active_range], logPlot[:active_range]) 
-pl.plot(tPoints[:active_range], best_fit, label="Line of best fit")
-pl.legend()
+
+lineS = 0.05    # Percentage into data to start best fit line
+lineF = 0.75    # Percentage into data to finish best fit line
+active = int(len(tPoints)*lineS), int(len(tPoints)*lineF)
+best_fit, m = line_best_fit(tPoints[active[0]:active[1]], logPlot[active[0]:active[1]])
+pl.plot(tPoints[active[0]:active[1]], best_fit, label="Line of best fit", color='r')
+pl.legend(loc='lower right')
 pl.show()
+
+
+
 
 print("The Lyapunov Exponent is approximately", m, "for this system.\n")
