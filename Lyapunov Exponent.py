@@ -68,11 +68,11 @@ def vary_init_conditions(num_trials):
     log_theta_plot = np.zeros([int((b-a)/h)], float)
     epsi = 1e-6
     for i in range(num_trials):
-        theta = rd.uniform(0.2,0.30)
+        theta = rd.uniform(0.2,0.21)
         thetaRand = chaos_runge_kutta(theta, 0)
         thetaEpsi = chaos_runge_kutta(theta + epsi, 0)
         for j in range(len(thetaRand)):
-            log_theta_plot[j] += np.log(np.abs(thetaRand[j] - thetaEpsi[j]))
+            log_theta_plot[j] += np.log(np.abs(thetaRand[j] - thetaEpsi[j])) + num_trials
             log_theta_plot[j] /= num_trials
     return log_theta_plot
 
@@ -104,12 +104,22 @@ def line_best_fit(arrayX, arrayY):
 
 # ======================================================================= #
 
+
+logPlotA = chaos_runge_kutta(0.2,0)
+logPlotB = chaos_runge_kutta(0.2+1e-6,0)
+
+for i in range(len(logPlotA)):
+    logPlotA[i] = np.log(np.abs( logPlotA[i] - logPlotB[i] ))
+
+pl.plot(tPoints, logPlotA)
+pl.show()
+
 logPlot = vary_init_conditions(100)
 pl.plot(tPoints, logPlot, label="Log Plot", color='c')
 
 
 lineS = 0.05    # Percentage into data to start best fit line
-lineF = 0.75    # Percentage into data to finish best fit line
+lineF = 0.50    # Percentage into data to finish best fit line
 active = int(len(tPoints)*lineS), int(len(tPoints)*lineF)
 best_fit, m = line_best_fit(tPoints[active[0]:active[1]], logPlot[active[0]:active[1]])
 pl.plot(tPoints[active[0]:active[1]], best_fit, label="Line of best fit", color='r')

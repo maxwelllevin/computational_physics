@@ -6,12 +6,6 @@ Created on Mon Oct 30 15:20:25 2017
 
 @author: Maxwell Levin
 """
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Oct 18 16:26:32 2017
-
-@author: Maxwell Levin
-"""
 
 
 import numpy as np
