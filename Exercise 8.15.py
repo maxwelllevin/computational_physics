@@ -22,7 +22,6 @@ dw1/dt = -w1^2sin(2th1-2th2)+2w2^2sin(th1-th2)+(g/L)[sin(th1-2th2)+3sin(th1)]
 dw2/dt =  4w1^2sin(th1-th2)+w2^2sin(2th1-2th2)+2(g/L)[sin(2th1-th2)-sin(th2)]
                                 3-cos(2th1 - 2th2)
 Which models the motion of a frictionless double pendulum.
-
 Also we seek to solve 
 E = -mgL(2cos(th1)+costh2) + mL^2(w1^2+0.5w2^2 w1w2cos(th1-th2))
 which should remain constant over time due to nature of our setup. In our
@@ -37,14 +36,14 @@ import pylab as pl
 m = 1
 g = 9.8
 L = 0.4
-h = 1e-1
+h = 1e-3
 
 # Initial Conditions
 ith1 = ith2 = np.pi/2
 iw1 = iw2 = 0
 
 # Our Domain
-tPts = np.arange(0,100,h)
+tPts = np.arange(0,10,h)
 
 # Equations of Motion
 def dth1(th1, th2, w1, w2, time):
@@ -113,8 +112,7 @@ def doublePendulum(th1, th2, w1, w2):
 
 
 th1P,th2P,w1P,w2P = doublePendulum(ith1,ith2,iw1,iw2)
-pl.plot(tPts, w1P)
-
-
-
-
+pl.plot(w1P, th1P)
+pl.title("Theta1 vs. Omega1")
+pl.xlabel("Omega1")
+pl.ylabel("Theta1")
