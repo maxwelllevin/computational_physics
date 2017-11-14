@@ -7,10 +7,6 @@ Created on Tue Nov  7 19:02:33 2017
 @author: Maxwell
 """
 
-# DONE: Calculate Energies of first two excited states
-# DONE: Repeat all calculations for new V(x) = v0x^4 / a^4
-# TODO: Calculate normalized wavefunctions for the three states & make a plot
-
 import numpy as np
 
 # Constants
@@ -26,7 +22,7 @@ a = 1e-11
 
 # Potential Function
 def V(x):
-    return v0*x*x/a**2
+    return v0*x**4/a**4
 
 
 # Do stuff
@@ -53,18 +49,20 @@ def solve(E):
     return r[0]
 
 
-def secant(E2):
+def secant(e2):
     # Main program to find the energy using the secant method
-    E1 = 0
-    psi2 = solve(E1)
-    target = e/10000
-    while abs(E1-E2) > target:
-        psi1, psi2 = psi2, solve(E2)
-        E1, E2 = E2, E2-psi2*(E2-E1)/(psi2-psi1)
+    e1 = 0
+    psi2 = solve(e1)
+    target = e/1000
+    while abs(e1-e2) > target:
+        psi1, psi2 = psi2, solve(e2)
+        e1, e2 = e2, e2-psi2*(e2-e1)/(psi2-psi1)
     # Energy of the Ground State
-    print("E =", E2/e, "eV")
+    print("E =", e2/e, "eV")
+    return e2/e
 
 
-secant(e)
-secant(300*e)
-secant(500*e)
+E1 = secant(e)
+E2 = secant(400*e)
+E3 = secant(910*e)
+
