@@ -10,7 +10,7 @@ Created on Tue Nov  7 20:53:46 2017
 
 import numpy as np
 import pylab as pl
-
+import matplotlib.animation as animation
 
 # DONE: Derive an expression for E = T + V in terms of th1, th2, w1, w2
 # DONE: Use 4th-Order RK method to solve the equations of motion for L = 40cm,
@@ -38,7 +38,7 @@ computation we seek to limit dE/dt to below 10^-5 J.
 m = 1
 g = 9.8
 L = 0.4
-h = 1e-3
+h = 1e-2
 
 # Initial Conditions
 ith1 = ith2 = np.pi/2
@@ -60,7 +60,7 @@ def dth2(th1, th2, w1, w2, time):
 
 # Equation of motion -- derivative of omega1
 def dw1(th1, th2, w1, w2, time):
-    temp = -(w1**2)*np.sin(2*th1-2*th2) + 2*(w1**2)*np.sin(th1-th2)
+    temp = -(w1**2)*np.sin(2*th1-2*th2) - 2*(w2**2)*np.sin(th1-th2)
     temp -= (g/L)*(np.sin(th1-2*th2)+3*np.sin(th1))
     temp /= 3-np.cos(2*th1-2*th2)
     return temp
@@ -128,7 +128,7 @@ def doublePendulum(th1, th2, w1, w2):
         elif (th2 > np.pi):
             th2 -= 2*np.pi
 
-    return th1Pts, th2Pts, w1Pts, w2Pts, ePts
+    return np.array(th1Pts), np.array(th2Pts), np.array(w1Pts), np.array(w2Pts), np.array(ePts)
 
 
 # ====================== Main Code ======================== #
@@ -142,4 +142,43 @@ th1P, th2P, w1P, w2P, E = doublePendulum(ith1, ith2, iw1, iw2)
 
 
 pl.plot(tPts, E)
+pl.xlabel("Time (s)")
+pl.ylabel("Energy (J)")
 pl.show()
+
+
+
+x1 = L*np.sin(th1P)
+y1 = -L*np.cos(th1P)
+
+x2 = L*np.sin(th2P) + x1
+y2 = -L*np.cos(th2P) + y1
+
+fig = pl.figure()
+ax = fig.add_subplot(111, autoscale_on=False, xlim=(-1, 1), ylim=(-1, 1))
+ax.set_aspect('equal')
+
+
+line, = ax.plot([], [], 'o-', lw=2)
+time_template = 'time = %.1fs'
+time_text = ax.text(0.05, 0.9, '', transform=ax.transAxes)
+
+
+def init():
+    line.set_data([], [])
+    time_text.set_text('')
+    return line, time_text
+
+
+def animate(i):
+    thisx = [0, x1[100*i], x2[100*i]]
+    thisy = [0, y1[100*i], y2[100*i]]
+
+    line.set_data(thisx, thisy)
+    time_text.set_text(time_template % (i*h*100))
+    return line, time_text
+
+
+
+ani = animation.FuncAnimation(fig, animate, np.arange(1, len(tPts)), interval=1, blit=True, init_func=init)
+ani.save('double_pendulum.mp4', fps=15)

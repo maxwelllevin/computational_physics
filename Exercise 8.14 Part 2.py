@@ -7,6 +7,8 @@ Created on Tue Nov  7 19:02:33 2017
 @author: Maxwell
 """
 
+# Repeat all calculations for V(x) = v0x^4 / a^4
+
 import numpy as np
 
 # Constants
