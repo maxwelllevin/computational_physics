@@ -38,14 +38,14 @@ computation we seek to limit dE/dt to below 10^-5 J.
 m = 1
 g = 9.8
 L = 0.4
-h = 1e-2
+h = 0.0001
 
 # Initial Conditions
 ith1 = ith2 = np.pi/2
 iw1 = iw2 = 0
 
 # Our Domain
-tPts = np.arange(0, 100, h)
+tPts = np.arange(0, 10, h)
 
 
 # Equation of motion -- derivative of theta1
@@ -134,11 +134,11 @@ def doublePendulum(th1, th2, w1, w2):
 # ====================== Main Code ======================== #
 
 th1P, th2P, w1P, w2P, E = doublePendulum(ith1, ith2, iw1, iw2)
-#pl.plot(w1P, th1P)
-#pl.title("Theta1 vs. Omega1")
-#pl.xlabel("Omega1")
-#pl.ylabel("Theta1")
-#pl.show()
+pl.plot(w1P, th1P)
+pl.title("Theta1 vs. Omega1")
+pl.xlabel("Omega1")
+pl.ylabel("Theta1")
+pl.show()
 
 
 pl.plot(tPts, E)
@@ -181,4 +181,4 @@ def animate(i):
 
 
 ani = animation.FuncAnimation(fig, animate, np.arange(1, len(tPts)), interval=1, blit=True, init_func=init)
-ani.save('double_pendulum.mp4', fps=15)
+ani.save('double_pendulum.html', fps=30)
